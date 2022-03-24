@@ -1,11 +1,11 @@
 import express from 'express';
-import products from './data/products.js';
 import connectDb from './config/db.js';
 import dotenv from 'dotenv';
 
 //Route files import
 import productRoutes from './routes/productRoutes.js';
 import ImportData from './DataImport.js';
+import errorHandler from './Middlewares/Error.js';
 
 dotenv.config();
 //Initialize express app
@@ -16,9 +16,9 @@ connectDb();
 
 //Import data api
 app.use('/api/import', ImportData);
-
-//Get all Products
 app.use('/api/products', productRoutes);
+// app.use(notFound);
+app.use(errorHandler);
 
 const port = process.env.PORT;
 
