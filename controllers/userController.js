@@ -1,6 +1,7 @@
 import User from '../models/UserModel.js';
 import asyncHandler from 'express-async-handler';
 import ErrorResponse from '../utils/errorResponse.js';
+import generateToken from '../utils/generateToken.js';
 
 const login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
@@ -11,7 +12,7 @@ const login = asyncHandler(async (req, res, next) => {
       name: user.name,
       email: user.email,
       isAdmin: user.isAdmin,
-      token: null,
+      token: generateToken(user._id),
       createdAt: user.createdAt,
     });
   } else {
