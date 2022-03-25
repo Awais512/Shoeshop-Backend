@@ -13,10 +13,7 @@ const getProduct = asyncHandler(async (req, res, next) => {
   if (product) {
     res.json(product);
   } else {
-    return new ErrorResponse(
-      `Product does not found with the id of ${req.params.id}`,
-      404
-    );
+    return next(new ErrorResponse('Product not found', 404));
   }
 });
 
