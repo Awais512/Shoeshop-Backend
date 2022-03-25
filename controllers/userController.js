@@ -22,7 +22,24 @@ const login = asyncHandler(async (req, res, next) => {
 
 //User Register
 const register = asyncHandler(async (req, res, next) => {
-  res.send('Register');
+  const { name, email, password } = req.body;
+  const existUser = await User.findOne({ email });
+  if (existUser) {
+    return next(new ErrorResponse('User already exist', 400));
+  }
+  const user = await User.create({ name, email, password });
+
+  if (user) {
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      token: generateToken(user._id),
+    });
+  } else {
+    return next(new ErrorResponse('Invalid user data', 400));
+  }
 });
 
 //User Profile
