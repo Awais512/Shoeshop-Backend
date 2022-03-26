@@ -42,7 +42,7 @@ const register = asyncHandler(async (req, res, next) => {
   }
 });
 
-//User Profile
+//Get User Profile
 const profile = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user._id);
   if (user) {
@@ -58,4 +58,29 @@ const profile = asyncHandler(async (req, res, next) => {
   }
 });
 
-export { login, register, profile };
+//Update User Profile
+const updateProfile = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+  if (user) {
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+
+    if (req.body.password) {
+      user.password = req.body.password;
+    }
+
+    const updateuser = await user.save();
+    res.json({
+      _id: updateuser._id,
+      name: updateuser.name,
+      email: updateuser.email,
+      isAdmin: updateuser.isAdmin,
+      createdAt: updateuser.createdAt,
+      token: generateToken(updateuser._id),
+    });
+  } else {
+    return next(new ErrorResponse('User not found', 400));
+  }
+});
+
+export { login, register, profile, updateProfile };
