@@ -18,6 +18,7 @@ const createOrder = asyncHandler(async (req, res, next) => {
   } else {
     const order = new Order({
       orderItems,
+      user: req.user._id,
       shippingAddress,
       paymentMethod,
       itemsPrice,
