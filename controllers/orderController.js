@@ -32,4 +32,9 @@ const createOrder = asyncHandler(async (req, res, next) => {
   }
 });
 
-export { createOrder };
+const getOrderDetails = asyncHandler(async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
+  res.json(order);
+});
+
+export { createOrder, getOrderDetails };
