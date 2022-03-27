@@ -6,6 +6,7 @@ import morgan from 'morgan';
 //Route files import
 import productRoutes from './routes/productRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
 import ImportData from './DataImport.js';
 import errorHandler from './Middlewares/Error.js';
 
@@ -25,6 +26,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use('/api/import', ImportData);
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/orders', orderRoutes);
 app.use(errorHandler);
 
 const port = process.env.PORT;
