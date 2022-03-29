@@ -62,4 +62,10 @@ const payOrder = asyncHandler(async (req, res, next) => {
   }
 });
 
-export { createOrder, getOrderDetails, payOrder };
+//Get logged In user's Order
+const getLoggedInUserOrders = asyncHandler(async (req, res, next) => {
+  const order = await Order.find({ user: req.user._id }).sort({ _id: -1 });
+  res.json(order);
+});
+
+export { createOrder, getOrderDetails, payOrder, getLoggedInUserOrders };
