@@ -33,8 +33,33 @@ const createOrder = asyncHandler(async (req, res, next) => {
 });
 
 const getOrderDetails = asyncHandler(async (req, res, next) => {
-  const order = await Order.findById(req.params.id);
+  const order = await Order.findById(req.params.id).populate(
+    'user',
+    'name email '
+  );
+  if (!order) {
+    return next(new ErrorResponse('No Order found', 400));
+  }
   res.json(order);
 });
 
-export { createOrder, getOrderDetails };
+//Pay Order
+const payOrder = asyncHandler(async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
+  if (order) {
+    order.isPaid = true;
+    order.paidAt = Date.now();
+    order.paymentResult = {
+      id: req.body.id,
+      status: req.body.status,
+      update_time: req.body.update_time,
+      email_address: req.body.email_address,
+    };
+    const updateOrder = await order.save();
+    res.json(updateOrder);
+  } else {
+    return next(new ErrorResponse('No Order found', 400));
+  }
+});
+
+export { createOrder, getOrderDetails, payOrder };
