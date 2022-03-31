@@ -4,7 +4,15 @@ import asyncHandler from 'express-async-handler';
 import ErrorResponse from '../utils/errorResponse.js';
 
 const getProducts = asyncHandler(async (req, res, next) => {
-  const products = await Product.find({});
+  const keyword = req.query.keyword
+    ? {
+        name: {
+          $regex: req.query.keyword,
+          $options: 'i',
+        },
+      }
+    : {};
+  const products = await Product.find({ ...keyword });
   res.status(200).json(products);
 });
 
