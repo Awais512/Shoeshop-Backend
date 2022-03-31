@@ -4,6 +4,8 @@ import asyncHandler from 'express-async-handler';
 import ErrorResponse from '../utils/errorResponse.js';
 
 const getProducts = asyncHandler(async (req, res, next) => {
+  const pageSize = 3;
+  const page = Number(req.query.pageNumber) || 1;
   const keyword = req.query.keyword
     ? {
         name: {
@@ -12,8 +14,12 @@ const getProducts = asyncHandler(async (req, res, next) => {
         },
       }
     : {};
-  const products = await Product.find({ ...keyword });
-  res.status(200).json(products);
+  const count = await Product.countDocuments({ ...keyword });
+  const products = await Product.find({ ...keyword })
+    .limit(pageSize)
+    .skip(pageSize * (page - 1))
+    .sort({ _id: -1 });
+  res.status(200).json({ products, page, pages: Math.ceil(count / pageSize) });
 });
 
 const getProduct = asyncHandler(async (req, res, next) => {
