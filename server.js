@@ -1,40 +1,30 @@
-import express from 'express';
-import connectDb from './config/db.js';
-import dotenv from 'dotenv';
-import morgan from 'morgan';
-
-//Route files import
-import productRoutes from './routes/productRoutes.js';
-import userRoutes from './routes/userRoutes.js';
-import orderRoutes from './routes/orderRoutes.js';
-import ImportData from './DataImport.js';
-import errorHandler from './Middlewares/Error.js';
+import express from "express";
+import dotenv from "dotenv";
+import connectDatabase from "./config/MongoDb.js";
+import ImportData from "./DataImport.js";
+import productRoute from "./Routes/ProductRoutes.js";
+import { errorHandler, notFound } from "./Middleware/Errors.js";
+import userRouter from "./Routes/UserRoutes.js";
+import orderRouter from "./Routes/orderRoutes.js";
 
 dotenv.config();
+connectDatabase();
 const app = express();
-
-//Connecting to Db
-connectDb();
-
-//Built in middlewares
 app.use(express.json());
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-}
 
-//Custom apis middleware
-app.use('/api/import', ImportData);
-app.use('/api/products', productRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/orders', orderRoutes);
-app.get('/api/config/paypal', (req, res) => {
+// API
+app.use("/api/import", ImportData);
+app.use("/api/products", productRoute);
+app.use("/api/users", userRouter);
+app.use("/api/orders", orderRouter);
+app.get("/api/config/paypal", (req, res) => {
   res.send(process.env.PAYPAL_CLIENT_ID);
 });
 
-// app.use(notFound);
+// ERROR HANDLER
+app.use(notFound);
 app.use(errorHandler);
 
-const port = process.env.PORT;
+const PORT = process.env.PORT || 1000;
 
-//Server code
-app.listen(port, () => console.log(`Server is running on port: ${port}`));
+app.listen(PORT, console.log(`server run in port ${PORT}`));
